@@ -67,11 +67,16 @@ namespace GuestApp.DataBase
             int month = now.Month;
             int year = now.Year;
             string update = $"UPDATE Users SET [Status] = N'Выписывается' WHERE [DateExit] = '{month}/{day}/{year}'";
-            string update1 = $"UPDATE Users SET [Status] = N'Свободен' WHERE [DateExit] < '{month}/{day}/{year}'"; ;
-            SqlCommand command = new SqlCommand(update, SqlConnection_connection);
-            command.ExecuteNonQuery();
-            command = new SqlCommand(update1, SqlConnection_connection);
-            command.ExecuteNonQuery();
+            string update1 = $"UPDATE Users SET [Status] = N'Свободен' WHERE [DateExit] < '{month}/{day}/{year}'"; 
+            string update2 = $"UPDATE Users SET [Status] = N'Занял' WHERE [DateExit] > '{month}/{day}/{year}' AND [DateStar] < '{month}/{day}/{year}'"; 
+            string update3 = $"UPDATE Users SET [Status] = N'Зарезервировал' WHERE [DateStar] > '{month}/{day}/{year}'";
+            string[] comands = { update, update1, update2, update3 };
+            SqlCommand command;
+            for (int i = 0; i < comands.Count(); i++)
+            {
+                command = new SqlCommand(comands[i], SqlConnection_connection);
+                command.ExecuteNonQuery();
+            }
         }
 
         // методы обновленя индеса/ов
